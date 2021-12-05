@@ -1,0 +1,17 @@
+import UIKit
+
+let fileURL = Bundle.main.url(forResource: "File", withExtension: "txt")
+let content = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+var inputArray = content.components(separatedBy: "\n")
+
+var previousnumb = inputArray[0]
+var count = 0
+
+for input in inputArray {
+    if previousnumb < input {
+        count += 1
+    }
+    previousnumb = input
+}
+
+print(count)
