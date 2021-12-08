@@ -1,0 +1,131 @@
+import UIKit
+
+func checkIfWon(array: [Int], val: Int) -> Bool {
+    if array.isEmpty {
+        return false
+    }
+    for i in 0...array.count-1 {
+        if array[i] == val {
+            return true
+        }
+    }
+    return false
+}
+
+func calculateResult(whichBoard: Int, bingoBoard: [[String]]) -> Int {
+    var sum: Int = 0
+    for i in 0...4 {
+        for j in 0...4 {
+            if checkArray[whichBoard][i][j] == false {
+                sum += Int(bingoBoard[i][j])!
+            }
+        }
+    }
+    return sum
+}
+
+func checkBingo(whichBoard: Int) -> Bool {
+    for i in 0...4 {
+        if checkArray[whichBoard][i][0] == true && checkArray[whichBoard][i][1] == true && checkArray[whichBoard][i][2] == true && checkArray[whichBoard][i][3] == true && checkArray[whichBoard][i][4] == true {
+            return true
+        } else if checkArray[whichBoard][0][i] == true && checkArray[whichBoard][1][i] == true && checkArray[whichBoard][2][i] == true && checkArray[whichBoard][3][i] == true && checkArray[whichBoard][4][i] == true {
+            return true
+        }
+    }
+    return false
+}
+
+func playBingo(whichboard: Int, pullArray: [String], bingoBoard: [[String]]) -> Bool{
+    for bingoNumb in 0...pullArray.count - 1 {
+        for rowI in 0...bingoBoard.count - 1 {
+            for numb in 0...bingoBoard[rowI].count - 1 {
+                if pullArray[bingoNumb] == bingoBoard[rowI][numb] {
+                    checkArray[whichboard][rowI][numb] = true
+                }
+            }
+        }
+    }
+    if checkBingo(whichBoard: whichboard) {
+        return true
+    }
+    return false
+}
+
+func playBingo(whichboard: Int, pull: String, bingoBoard: [[String]]) -> Bool{
+    for rowI in 0...bingoBoard.count - 1 {
+        for numb in 0...bingoBoard[rowI].count - 1 {
+            if pull == bingoBoard[rowI][numb] {
+                checkArray[whichboard][rowI][numb] = true
+            }
+        }
+    }
+    if checkBingo(whichBoard: whichboard) {
+        return true
+    }
+    return false
+}
+
+func formatBoard(bingoArray: [String]) -> [[String]] {
+    var resultArray: [[String]] = []
+    for row in bingoArray {
+        let rowArray = row.components(separatedBy: " ")
+        resultArray.append(rowArray.filter { $0 != "" })
+    }
+    return resultArray
+}
+
+//format input data
+
+let fileURL = Bundle.main.url(forResource: "File", withExtension: "txt")
+let content = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+var inputArray = content.components(separatedBy: "\n")
+inputArray.remove(at: inputArray.count - 1)
+
+let pullArray = inputArray[0].components(separatedBy: ",")
+inputArray.remove(at: 0)
+var bingoArray: [[[String]]] = []
+var index = 0
+
+for i in 0...inputArray.count-6 {
+    if inputArray[i] == "" {
+        bingoArray.append(formatBoard(bingoArray: [inputArray[i+1], inputArray[i+2], inputArray[i+3], inputArray[i+4], inputArray[i+5]]))
+        index += 1
+    }
+}
+
+// create 3 dimensional array to check results
+public var checkArray: [[[Bool]]] = []
+
+for boardI in 0...bingoArray.count - 1 {
+    checkArray.append([[Bool]]())
+    for rowI in 0...bingoArray[0].count - 1 {
+        checkArray[boardI].append([Bool]())
+        for _ in 0...bingoArray[0][0].count - 1 {
+            checkArray[boardI][rowI].append(false)
+        }
+    }
+}
+
+//play bingo
+
+var firstWonResult = 0
+var lastWonResult = 0
+var alreadyWonBoard: [Int] = []
+var firstBingo: Bool = false
+
+for i in 0...pullArray.count / bingoArray[0][0].count * bingoArray[0][0].count - 2 {
+    for j in 0...bingoArray.count - 1 {
+        if playBingo(whichboard: j, pull: pullArray[i], bingoBoard: bingoArray[j]) && !checkIfWon(array: alreadyWonBoard, val: j) {
+            if !firstBingo {
+                firstBingo = true
+                firstWonResult = Int(pullArray[i])! * calculateResult(whichBoard: j, bingoBoard: bingoArray[j])
+            }
+            alreadyWonBoard.append(j)
+            lastWonResult = Int(pullArray[i])! * calculateResult(whichBoard: j, bingoBoard: bingoArray[j])
+        }
+    }
+}
+
+print(firstWonResult)
+print(lastWonResult)
+
