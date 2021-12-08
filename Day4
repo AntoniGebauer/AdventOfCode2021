@@ -35,22 +35,6 @@ func checkBingo(whichBoard: Int) -> Bool {
     return false
 }
 
-func playBingo(whichboard: Int, pullArray: [String], bingoBoard: [[String]]) -> Bool{
-    for bingoNumb in 0...pullArray.count - 1 {
-        for rowI in 0...bingoBoard.count - 1 {
-            for numb in 0...bingoBoard[rowI].count - 1 {
-                if pullArray[bingoNumb] == bingoBoard[rowI][numb] {
-                    checkArray[whichboard][rowI][numb] = true
-                }
-            }
-        }
-    }
-    if checkBingo(whichBoard: whichboard) {
-        return true
-    }
-    return false
-}
-
 func playBingo(whichboard: Int, pull: String, bingoBoard: [[String]]) -> Bool{
     for rowI in 0...bingoBoard.count - 1 {
         for numb in 0...bingoBoard[rowI].count - 1 {
