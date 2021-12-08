@@ -78,6 +78,7 @@ for i in 0...inputArray.count-6 {
 }
 
 // create 3 dimensional array to check results
+
 public var checkArray: [[[Bool]]] = []
 
 for boardI in 0...bingoArray.count - 1 {
