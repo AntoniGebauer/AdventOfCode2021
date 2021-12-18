@@ -1,0 +1,33 @@
+import UIKit
+
+func processDays(daysnumb : Int) -> Int {
+    for _ in 1...daysnumb {
+        let pom = fishArray[0]
+        fishArray[0] = fishArray[1]
+        for i in 1...8 {
+            fishArray[i-1] = fishArray[i]
+        }
+        fishArray[6] += pom
+        fishArray[8] = pom
+    }
+    return fishArray.reduce(0, +)
+
+}
+//format input data
+
+let fileURL = Bundle.main.url(forResource: "File", withExtension: "txt")
+let content = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+var inputArray = content.components(separatedBy: ",")
+inputArray[inputArray.count - 1] = inputArray[inputArray.count - 1].replacingOccurrences(of: "\n", with: "")
+let daysnumb = 256
+var fishArray = [0,0,0,0,0,0,0,0,0]
+
+for i in 0...inputArray.count - 1 {
+    fishArray[Int(inputArray[i])!] += 1
+}
+
+print(processDays(daysnumb: daysnumb))
+
+
+
+
