@@ -1,0 +1,36 @@
+import UIKit
+
+func processNumbers (n: Int) -> Int {
+    var result = 0
+    for i in 0...n {
+        result += i
+    }
+    return result
+}
+
+//format input data
+
+let fileURL = Bundle.main.url(forResource: "File", withExtension: "txt")
+let content = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+var inputArray = content.components(separatedBy: ",")
+inputArray[inputArray.count - 1] = inputArray[inputArray.count - 1].replacingOccurrences(of: "\n", with: "")
+var crabArray: [Int] = []
+
+for i in 0...inputArray.count - 1 {
+    crabArray.append(Int(inputArray[i])!)
+}
+
+//process data
+
+var fuel1 = 0
+var fuel2 = 0
+let medianVal = crabArray.sorted(by: <)[crabArray.count / 2]
+let meanVal = crabArray.reduce(0, +) / crabArray.count
+
+for j in 0...crabArray.count - 1 {
+    fuel1 += abs(crabArray[j] - medianVal)
+    fuel2 += processNumbers(n: abs(crabArray[j] - meanVal))
+}
+
+print(fuel1)
+print(fuel2)
