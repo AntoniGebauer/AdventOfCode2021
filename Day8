@@ -1,0 +1,179 @@
+import UIKit
+
+func displayResult () -> Int {
+    var sum = 0
+    for i in 0...result.count - 1 {
+        sum += Int(result[i][0])! * 1000 + Int(result[i][1])! * 100 + Int(result[i][2])! * 10 + Int(result[i][3])!
+    }
+    return sum
+}
+
+func subtractString (string1: String, string2: String) -> String {
+    var result = string1
+    for char1 in string1 {
+        for char2 in string2 {
+            if char1 == char2 {
+                result = result.replacingOccurrences(of: String(char1), with: "")
+            }
+        }
+    }
+    return result
+}
+
+func decode(myarray: [String]) -> [String] {
+    var array = myarray
+    var one = ""
+    var four = ""
+    var seven = ""
+    var eight = ""
+
+    // obvious numbers:
+    for i in 0...array.count - 1 {
+        array[i] = String(array[i].sorted())
+        if array[i].count ==  3 {
+            seven = array[i]
+        }
+        if array[i].count ==  2 {
+            one = array[i]
+        }
+        if array[i].count ==  7 {
+            eight = array[i]
+        }
+        if array[i].count ==  4 {
+            four = array[i]
+        }
+    }
+    
+    array.remove(at: array.firstIndex(of: one)!)
+    array.remove(at: array.firstIndex(of: four)!)
+    array.remove(at: array.firstIndex(of: seven)!)
+    array.remove(at: array.firstIndex(of: eight)!)
+    
+    var downleft = eight
+    var upright = eight
+    var two = ""
+    var three = ""
+    var five = ""
+    var nine = ""
+    var zero = ""
+    var six = ""
+    
+    //finding zero six and nine based on string subtraction
+    
+    for i in 0...array.count - 1 {
+        if array[i].count == 6 {
+            var count1 = 0
+            var count4 = 0
+            for char in array[i] {
+                for char1 in one {
+                    if char == char1 {
+                        count1 += 1
+                    }
+                }
+                for char1 in four {
+                    if char == char1 {
+                        count4 += 1
+                    }
+                }
+            }
+            if count4 == four.count && count1 == one.count {
+                downleft = subtractString(string1: eight, string2: array[i])
+                nine = array[i]
+            } else if count4 < four.count && count1 == one.count {
+                zero = array[i]
+            } else {
+                upright = subtractString(string1: eight, string2: array[i])
+                six = array[i]
+            }
+        }
+    }
+    array.remove(at: array.firstIndex(of: nine)!)
+    array.remove(at: array.firstIndex(of: zero)!)
+    array.remove(at: array.firstIndex(of: six)!)
+    
+    //finding two three and five based on postions found
+    
+    for i in 0...array.count - 1 {
+        if array[i].contains(downleft) {
+            two = array[i]
+        } else if array[i].contains(upright) {
+            three = array[i]
+        } else {
+            five = array[i]
+        }
+    }
+    array.remove(at: array.firstIndex(of: two)!)
+    array.remove(at: array.firstIndex(of: three)!)
+    array.remove(at: array.firstIndex(of: five)!)
+    
+    //appending new array in asc order
+    array.append(zero)
+    array.append(one)
+    array.append(two)
+    array.append(three)
+    array.append(four)
+    array.append(five)
+    array.append(six)
+    array.append(seven)
+    array.append(eight)
+    array.append(nine)
+    
+    return array
+    
+}
+
+func processData () {
+    for i in 0...numberArray.count - 1 {
+        result.append([String]())
+        var decodedArray: [String] = []
+        for j in 0...9 {
+            decodedArray.append(numberArray[i][j])
+        }
+        decodedArray = decode(myarray: decodedArray)
+        for j in 11...14 {
+            switch String(numberArray[i][j].sorted()) {
+            case decodedArray[0]:
+                result[i].append("0")
+            case decodedArray[1]:
+                result[i].append("1")
+            case decodedArray[2]:
+                result[i].append("2")
+            case decodedArray[3]:
+                result[i].append("3")
+            case decodedArray[4]:
+                result[i].append("4")
+            case decodedArray[5]:
+                result[i].append("5")
+            case decodedArray[6]:
+                result[i].append("6")
+            case decodedArray[7]:
+                result[i].append("7")
+            case decodedArray[8]:
+                result[i].append("8")
+            case decodedArray[9]:
+                result[i].append("9")
+            default:
+                break
+            }
+        }
+        decodedArray.removeAll()
+    }
+}
+
+//format input data
+
+let fileURL = Bundle.main.url(forResource: "File", withExtension: "txt")
+let content = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+var inputArray = content.components(separatedBy: "\n")
+inputArray.popLast()
+
+public var numberArray: [[String]] = []
+public var result: [[String]] = []
+
+for i in 0...inputArray.count - 1 {
+    numberArray.append(inputArray[i].components(separatedBy: " "))
+}
+
+
+processData()
+print(displayResult())
